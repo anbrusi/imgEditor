@@ -5,4 +5,4 @@ ANLEITUNGEN
 3. Erstelle die Struktur der Datenbank mit dem Query 'iststch_img.sql' z.B. mit der Import Funktion von phpMyAdmin
 4. Stelle sicher, dass das Verzeichnis 'hashedImages' vom Browser laesbar und schreibbar ist.
 5. Entferne die schon in 'hashedImages vorhandenen Dateien. Sie stammen von meinen Tests und sind nicht in der leeren Datenbank registriert.
-
+6. Die Funktionalität wird in zwei Videos erklärt, aber die sind zu gross für GitHub.
