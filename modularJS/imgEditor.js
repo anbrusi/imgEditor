@@ -449,6 +449,13 @@ class Placeholders {
             }
         }
     }
+    shrinkImages() {
+        for (let item of this.items) {
+            item.shrinkToImg();
+            let magFactor = this.parentImgContainer.magFactor;
+            this.applyGeometry(magFactor);
+        }
+    }
 }
 
 class QuestionPlaceholders extends Placeholders{
@@ -466,11 +473,17 @@ class QuestionPlaceholders extends Placeholders{
     * 
     * @param {array} reps array of placholder Representations
     */
-    load(reps) {
+    async load(reps) {
         for (let rep of reps) {
             let plh = new QuestionPlaceholder(this, rep.id,rep.type,rep.fullRect, undefined); 
+            plh.content = rep.content;           
             this.append(plh);
         }
+        // Images and text must be loaded separately, because if they are mixed and text is loaded after an image
+        // in the same async method, the text does not get loaded
+        await this.loadImageContent();
+        this.shrinkImages();
+        this.loadTextContent();
     }
     removeImg(id) {
         for (let plh of this.items) {
@@ -489,13 +502,6 @@ class QuestionPlaceholders extends Placeholders{
 class SolutionPlaceholders extends Placeholders{
     constructor(parentImgContainer) {
         super(parentImgContainer);
-    }
-    shrinkImages() {
-        for (let item of this.items) {
-            item.shrinkToImg();
-            let magFactor = this.parentImgContainer.magFactor;
-            this.applyGeometry(magFactor);
-        }
     }
     /**
      * Each placeholder is represented by an object, looking like:
@@ -525,13 +531,6 @@ class SolutionPlaceholders extends Placeholders{
 class AnswerPlaceholders extends Placeholders{
     constructor(parentImgContainer) {
         super(parentImgContainer);
-    }
-    shrinkImages() {
-        for (let item of this.items) {
-            item.shrinkToImg();
-            let magFactor = this.parentImgContainer.magFactor;
-            this.applyGeometry(magFactor);
-        }
     }
     /**
      * Each placeholder is represented by an object, looking like:
@@ -1897,7 +1896,7 @@ class IsImgQuestion extends IsImg {
         this.workspace.addEventListener('mousemove', this.boundWorkspaceMousemoveH);
         this.workspace.addEventListener('mouseleave', this.boundWorkspaceMouseleaveH);
         this.globalDivNode.appendChild(this.workspace);
-        if (this.loadedRep.gallery.length > 0) {
+        if (this.loadedRep.gallery?.length > 0) {
             this.gallery = new IsQuestionGallery(this, this.height, this.width);
         }
     }
